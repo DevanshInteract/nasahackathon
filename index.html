@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NASA Space Registration Portal</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Animated stars background -->
+    <div class="stars" id="stars"></div>
+    
+    <!-- Floating astronaut -->
+    <div class="astronaut"></div>
+    
+    <!-- Planet decoration -->
+    <div class="planet"></div>
+
+    <div class="container">
+        <div class="header">
+            <h1 class="logo">NASA PORTAL</h1>
+            <p class="subtitle">Join the next generation of space explorers</p>
+        </div>
+
+         <button class="register-btn" onclick="showRegistrationForm()">
+            REGISTER FOR HACKATHON
+        </button> 
+
+        <div class="registration-form" id="registrationForm">
+            <button class="close-btn" onclick="hideRegistrationForm()">&times;</button>
+            <h2 class="form-title"> Hackathon Registration</h2>
+            
+            <form onsubmit="handleSubmit(event)">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="firstName">First Name</label>
+                        <input type="text" id="firstName" name="firstName" placeholder="Enter your first name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="lastName">Last Name</label>
+                        <input type="text" id="lastName" name="lastName" placeholder="Enter your last name" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" name="email" placeholder="astronaut@nasa.gov" required>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="phone">Phone Number</label>
+                        <input type="tel" id="phone" name="phone" placeholder="+1 (555) 123-4567" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="age">Age</label>
+                        <input type="number" id="age" name="age" min="18" max="65" placeholder="25" required>
+                    </div>
+                </div>
+
+                 <div class="form-group">
+                    <label for="country">ADD TEAM NAME</label>
+                    <input type="text" id="country" name="country" placeholder="Enter your TEAM  NAME" required>
+                </div>
+                <div class="form-group">
+                    <label for="teamName">MEMBER 1</label>
+                    <input type="text" id="teamName" name="teamName" placeholder="Enter your member1" required>
+                </div>
+                <div class="form-group">
+                    <label for="country">MEMBER 2</label>
+                    <input type="text" id="teamName" name="teamName" placeholder="Enter your member2" required>
+                </div>
+                <div class="form-group">
+                    <label for="country">MEMBER 3</label>
+                    <input type="text" id="teamName" name="teamName" placeholder="Enter your member3" required>
+                </div>
+                <div class="form-group">
+                    <label for="country">MEMBER 4</label>
+                    <input type="text" id="teamName" name="teamName" placeholder="Enter your member4" required>
+                    </div> 
+
+                <!-- <div class="form-group">
+                    <label for="mission">Preferred Mission</label>
+                    <select id="mission" name="mission" required>
+                        <option value="">Select a mission</option>
+                        <option value="mars">Mars Exploration</option>
+                        <option value="moon">Lunar Base Program</option>
+                        <option value="iss">International Space Station</option>
+                        <option value="asteroid">Asteroid Mining</option>
+                        <option value="research">Space Research</option>
+                    </select>
+                </div> 
+
+                 <div class="form-group">
+                    <label for="experience">Space Experience</label>
+                    <select id="experience" name="experience" required>
+                        <option value="">Select your experience level</option>
+                        <option value="none">No Experience</option>
+                        <option value="basic">Basic Training</option>
+                        <option value="intermediate">Intermediate</option>
+                        <option value="advanced">Advanced</option>
+                        <option value="expert">Expert Astronaut</option>
+                    </select>
+                </div> -->
+
+                <button type="submit" class="submit-btn">
+                     Register
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Create animated stars
+            function createStars() {
+            const starsContainer = document.getElementById('stars');
+            const numStars = 100;
+
+             for (let i = 0; i < numStars; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.animationDelay = Math.random() * 2 + 's';
+            starsContainer.appendChild(star);
+           }
+         }
+
+        function showRegistrationForm() {
+            document.getElementById('registrationForm').classList.add('active');
+        }
+
+        function hideRegistrationForm() {
+            document.getElementById('registrationForm').classList.remove('active');
+        }
+
+        function handleSubmit(event) {
+            event.preventDefault();
+            
+            // Get form data
+            const formData = new FormData(event.target);
+            const userData = Object.fromEntries(formData);
+            
+            // Show success message
+            alert(` Welcome to NASA, ${userData.firstName}! Your application for ${userData.mission} mission has been submitted successfully. Prepare for launch! `);
+            
+            // Reset form and hide it
+            event.target.reset();
+            hideRegistrationForm();
+        }
+
+        // Initialize stars when page loads
+        createStars();
+
+        // Close form when clicking outside
+        document.addEventListener('click', function(event) {
+            const form = document.getElementById('registrationForm');
+            const registerBtn = document.querySelector('.register-btn');
+            
+            if (form.classList.contains('active') && 
+                !form.contains(event.target) && 
+                !registerBtn.contains(event.target)) {
+                hideRegistrationForm();
+            }
+        });
+    </script>
+</body>
+</html>
