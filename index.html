@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NASA Space Registration Portal</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="stars" id="stars"></div>
+    
+    <div class="astronaut"></div>
+    
+    <div class="planet"></div>
+
+    <div class="container">
+        <div class="header">
+            <h1 class="logo">NASA PORTAL</h1>
+            <p class="subtitle">Join the next generation of space explorers</p>
+        </div>
+
+        <button class="register-btn">
+            REGISTER FOR HACKATHON
+        </button> 
+
+        <div class="registration-form" id="registrationForm">
+            <button class="close-btn">&times;</button>
+            <h2 class="form-title">Hackathon Registration</h2>
+            
+            <form id="hackathon-form">
+                <fieldset>
+                    <legend>Team Lead Information</legend>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="firstName">First Name</label>
+                            <input type="text" id="firstName" name="firstName" placeholder="Enter your first name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="lastName">Last Name</label>
+                            <input type="text" id="lastName" name="lastName" placeholder="Enter your last name" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" name="email" placeholder="astronaut@nasa.gov" required>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="phone">Phone Number</label>
+                            <input type="tel" id="phone" name="phone" placeholder="+91 12345 67890" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="age">Age</label>
+                            <input type="number" id="age" name="age" min="18" max="99" placeholder="25" required>
+                        </div>
+                    </div>
+                </fieldset>
+
+                <fieldset>
+                    <legend>Team Details</legend>
+                    <div class="form-group">
+                        <label for="teamName">Team Name</label>
+                        <input type="text" id="teamName" name="teamName" placeholder="Enter your team's name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="member1">Member 1 (Team Lead Name)</label>
+                        <input type="text" id="member1" name="member1" placeholder="Enter full name of member 1" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="member2">Member 2</label>
+                        <input type="text" id="member2" name="member2" placeholder="Enter full name of member 2">
+                    </div>
+                    <div class="form-group">
+                        <label for="member3">Member 3</label>
+                        <input type="text" id="member3" name="member3" placeholder="Enter full name of member 3">
+                    </div>
+                    <div class="form-group">
+                        <label for="member4">Member 4</label>
+                        <input type="text" id="member4" name="member4" placeholder="Enter full name of member 4">
+                    </div>
+                </fieldset>
+                
+                <button type="submit" class="submit-btn">Register</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+    // --- SETUP AND EVENT LISTENERS ---
+    document.addEventListener('DOMContentLoaded', () => {
+        // This ensures the script runs after the entire HTML document is loaded.
+        
+        // Attaching event listeners here instead of using inline onclick/onsubmit
+        document.querySelector('.register-btn').addEventListener('click', showRegistrationForm);
+        document.querySelector('.close-btn').addEventListener('click', hideRegistrationForm);
+        document.getElementById('hackathon-form').addEventListener('submit', handleSubmit);
+        
+        // Initialize animated stars
+        createStars();
+    });
+
+    // --- FUNCTIONS ---
+    function createStars() {
+        const starsContainer = document.getElementById('stars');
+        if (!starsContainer) return;
+        const numStars = 100;
+        for (let i = 0; i < numStars; i++) {
+            const star = document.createElement('div');
+            star.className = 'star';
+            star.style.left = Math.random() * 100 + '%';
+            star.style.top = Math.random() * 100 + '%';
+            star.style.animationDelay = Math.random() * 2 + 's';
+            starsContainer.appendChild(star);
+        }
+    }
+
+    function showRegistrationForm() {
+        document.getElementById('registrationForm').classList.add('active');
+    }
+
+    function hideRegistrationForm() {
+        document.getElementById('registrationForm').classList.remove('active');
+    }
+
+    async function handleSubmit(event) {
+        event.preventDefault();
+
+        const form = event.target;
+        const submitButton = form.querySelector('.submit-btn');
+        submitButton.disabled = true;
+        submitButton.textContent = 'Submitting...';
+
+        const members = [
+            form.elements.member1.value,
+            form.elements.member2.value,
+            form.elements.member3.value,
+            form.elements.member4.value,
+        ].filter(member => member.trim() !== '');
+
+        const userData = {
+            firstName: form.elements.firstName.value,
+            lastName: form.elements.lastName.value,
+            email: form.elements.email.value,
+            phone: form.elements.phone.value,
+            age: form.elements.age.value,
+            teamName: form.elements.teamName.value,
+            members: members,
+        };
+
+        try {
+            // IMPORTANT: This fetch call requires a backend server.
+            // This will not work by simply opening the HTML file in a browser.
+            // You need a server running that is configured to handle POST requests to '/api/register'.
+            const response = await fetch('/api/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(userData),
+            });
+
+            const result = await response.json();
+
+            if (!response.ok) {
+                throw new Error(result.message || 'An unknown error occurred.');
+            }
+
+            alert(`✅ Welcome, ${userData.firstName}! Your team "${userData.teamName}" has been registered successfully. Prepare for launch!`);
+            
+            form.reset();
+            hideRegistrationForm();
+
+        } catch (error) {
+            console.error('Submission failed:', error);
+            alert(`❌ Registration Failed: ${error.message}\n\n(Note: This requires a running backend server to work.)`);
+        } finally {
+            submitButton.disabled = false;
+            submitButton.textContent = 'Register';
+        }
+    }
+    </script>
+</body>
+</html>
