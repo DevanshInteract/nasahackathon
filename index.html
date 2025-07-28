@@ -111,58 +111,92 @@
     </div>
 
     <script>
-        // Create animated stars
-            function createStars() {
-            const starsContainer = document.getElementById('stars');
-            const numStars = 100;
-
-             for (let i = 0; i < numStars; i++) {
-                const star = document.createElement('div');
-                star.className = 'star';
-                star.style.left = Math.random() * 100 + '%';
-                star.style.top = Math.random() * 100 + '%';
-                star.style.animationDelay = Math.random() * 2 + 's';
+    // Create animated stars (no changes needed here)
+    function createStars() {
+        const starsContainer = document.getElementById('stars');
+        const numStars = 100;
+        for (let i = 0; i < numStars; i++) {
+            const star = document.createElement('div');
+            star.className = 'star';
+            star.style.left = Math.random() * 100 + '%';
+            star.style.top = Math.random() * 100 + '%';
+            star.style.animationDelay = Math.random() * 2 + 's';
             starsContainer.appendChild(star);
-           }
-         }
-
-        function showRegistrationForm() {
-            document.getElementById('registrationForm').classList.add('active');
         }
+    }
 
-        function hideRegistrationForm() {
-            document.getElementById('registrationForm').classList.remove('active');
-        }
+    function showRegistrationForm() {
+        document.getElementById('registrationForm').classList.add('active');
+    }
 
-        function handleSubmit(event) {
-            event.preventDefault();
-            
-            // Get form data
-            const formData = new FormData(event.target);
-            const userData = Object.fromEntries(formData);
-            
-            // Show success message
-            alert(` Welcome to NASA, ${userData.firstName}! Your application for ${userData.mission} mission has been submitted successfully. Prepare for launch! `);
-            
-            // Reset form and hide it
-            event.target.reset();
-            hideRegistrationForm();
-        }
+    function hideRegistrationForm() {
+        document.getElementById('registrationForm').classList.remove('active');
+    }
 
-        // Initialize stars when page loads
-        createStars();
+    // --- UPDATED FORM SUBMISSION LOGIC ---
+    async function handleSubmit(event) {
+        event.preventDefault(); // Prevent the form from reloading the page
 
-        // Close form when clicking outside
-        document.addEventListener('click', function(event) {
-            const form = document.getElementById('registrationForm');
-            const registerBtn = document.querySelector('.register-btn');
-            
-            if (form.classList.contains('active') && 
-                !form.contains(event.target) && 
-                !registerBtn.contains(event.target)) {
-                hideRegistrationForm();
+        const form = event.target;
+        const submitButton = form.querySelector('.submit-btn');
+        submitButton.disabled = true; // Disable button to prevent multiple clicks
+        submitButton.textContent = 'Submitting...';
+
+        // Collect member names, filtering out any empty fields
+        const members = [
+            form.elements.member1.value,
+            form.elements.member2.value,
+            form.elements.member3.value,
+            form.elements.member4.value,
+        ].filter(member => member.trim() !== '');
+
+        // Create a data object to send to the server
+        const userData = {
+            firstName: form.elements.firstName.value,
+            lastName: form.elements.lastName.value,
+            email: form.elements.email.value,
+            phone: form.elements.phone.value,
+            age: form.elements.age.value,
+            teamName: form.elements.teamName.value,
+            members: members,
+        };
+
+        try {
+            // Send the data to your backend server
+            const response = await fetch('http://localhost:3000/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(userData),
+            });
+
+            const result = await response.json();
+
+            if (!response.ok) {
+                // If server responds with an error, show it
+                throw new Error(result.message || 'An unknown error occurred.');
             }
-        });
-    </script>
+
+            // Show success message
+            alert(`✅ Welcome, ${userData.firstName}! Your team "${userData.teamName}" has been registered successfully. Prepare for launch!`);
+            
+            form.reset();
+            hideRegistrationForm();
+
+        } catch (error) {
+            // Show any error messages to the user
+            console.error('Submission failed:', error);
+            alert(`❌ Registration Failed: ${error.message}`);
+        } finally {
+            // Re-enable the submit button
+            submitButton.disabled = false;
+            submitButton.textContent = 'Register';
+        }
+    }
+
+    // Initialize stars when page loads
+    createStars();
+</script>
 </body>
 </html>
