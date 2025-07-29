@@ -12,7 +12,7 @@ exports.handler = async function(event) {
     await client.connect();
     
     // As requested, this will save to a "hackathon" database
-    const collection = client.db("hackathon").collection("registrations");
+    const collection = client.db("hackathon").collection("hackathon entries");
     
     // Insert the form data from your new form
     await collection.insertOne(data);
