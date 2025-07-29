@@ -1,34 +1,33 @@
 const { MongoClient } = require("mongodb");
 
+// Get the secret database connection string from Netlify's environment variables
 const mongoUri = process.env.MONGODB_URI;
 
 exports.handler = async function(event) {
-  if (event.httpMethod !== 'POST') {
-    return { statusCode: 405, body: 'Method Not Allowed' };
-  }
-
   const client = new MongoClient(mongoUri);
 
   try {
     const data = JSON.parse(event.body);
 
     await client.connect();
-
-    // This is the line that saves to your new database and collection
-    const collection = client.db("nasaHackathon").collection("teams");
-
+    
+    // As requested, this will save to a "hackathon" database
+    const collection = client.db("hackathon").collection("registrations");
+    
+    // Insert the form data from your new form
     await collection.insertOne(data);
 
     return {
       statusCode: 200,
-      body: JSON.stringify({ message: "Success! Your team has been registered." })
+      body: JSON.stringify({ message: "Success! Your registration has been saved." })
     };
-
-  } catch (error) {
+    
+  } catch (error)
+  {
     console.error("Error:", error);
     return {
       statusCode: 500,
-      body: JSON.stringify({ message: "Error saving your registration." })
+      body: JSON.stringify({ message: "Error saving your submission." })
     };
   } finally {
     await client.close();
