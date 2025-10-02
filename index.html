@@ -368,7 +368,7 @@
                         <label for="newsletter">Subscribe to NASA Space Apps updates and news</label>
                     </div>
                     <button type="submit" class="submit-btn">
-                        Register Now
+                        Registrations Closed
                     </button>
                 </form>
             </div>
@@ -423,38 +423,9 @@
         </div>
     </div>
     
-    <script>
-        document.getElementById('registrationForm').addEventListener('submit', async (event) => {
-            event.preventDefault();
-            // Get the submit button
-            const submitBtn = event.target.querySelector('.submit-btn');
-            // --> NEW: Disable the button immediately and change its text
-            submitBtn.disabled = true;
-            submitBtn.textContent = 'Processing..';
-            const formData = new FormData(event.target);
-            const data = Object.fromEntries(formData.entries());
-            try {
-                const response = await fetch('/.netlify/functions/register', {
-                    method: 'POST',
-                    body: JSON.stringify(data)
-                });
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                const result = await response.json();
-                alert(result.message); 
-                // The page will redirect, so we don't need to re-enable the button
-                window.location.href = '';
-            } catch (error) {
-                console.error('Error:', error);
-                alert('There was a problem with your submission.');
-                // --> NEW: Re-enable the button only if there's an error
-                submitBtn.disabled = false;
-                submitBtn.textContent = 'Register Now';
-            }
-        });
-    </script>
+   
 </body>
 </html>
+
 
 
